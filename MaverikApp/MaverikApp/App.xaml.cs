@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MaverikApp.Helpers;
+using MaverikApp.View;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +14,15 @@ namespace MaverikApp
         public App()
         {
             InitializeComponent();
+            if (Settings.IsLoggedIn)
+            {
+                MainPage = new NavigationPage(new MainPage());
+            }
+            else
+            {
+                MainPage = new NavigationPage(new LoginPage());
+            }
 
-            MainPage = new MaverikApp.MainPage();
         }
 
         protected override void OnStart()
@@ -30,5 +39,7 @@ namespace MaverikApp
         {
             // Handle when your app resumes
         }
+
+
     }
 }
