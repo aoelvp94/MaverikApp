@@ -1,5 +1,4 @@
-﻿using MaverikApp.ServicesHandler;
-using MaverikApp.ViewModel;
+﻿using MaverikApp.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,19 +25,10 @@ namespace MaverikApp.View
             viewModel.Navigation = this.Navigation;
         }
 
-        private async void ButtonLogin_Clicked(object sender, EventArgs e)
+        private void ButtonLogin_Clicked(object sender, EventArgs e)
         {
-            LoginService services = new LoginService();
-            var getLoginDetails = await services.CheckLoginIfExists(EmailEntry.Text, PasswordEntry.Text);
-
-            if (getLoginDetails)
-            {
-                await DisplayAlert("Login success", "You are login", "Okay", "Cancel");
-            }
-            else
-            {
-                await DisplayAlert("Login failed", "Username or Password is incorrect or not exists", "Okay", "Cancel");
-            }
+            viewModel.Login();
+           
         }
 
         protected override bool OnBackButtonPressed()

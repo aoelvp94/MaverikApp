@@ -1,9 +1,14 @@
-﻿using MaverikApp.Helpers;
+﻿using Java.IO;
+using MaverikApp.Helpers;
 using MaverikApp.Model;
 using MaverikApp.View;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -18,6 +23,8 @@ namespace MaverikApp.ViewModel
         public ICommand LoginCommand { get; set; }
         #endregion
 
+        private const string URL = "http://maverik-project.com";
+        private string urlParameters = "/api/v1/auth/sign_in";
         #region Properties
         private User _user = new User();
 
@@ -38,51 +45,50 @@ namespace MaverikApp.ViewModel
 
         public LoginPageViewModel()
         {
-            LoginCommand = new Command(Login);
-        }
+            LoginCommand = new Command(Login);        
+        
+    }
         public async void Login()
         {
+            try { 
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(URL);
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            //This code lists the RESTful service response//
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "relativeAddress");
             
+            request.Content = new StringContent("{\"email\":\"" + User.Email + "\",\"password\":" + User.Password + "}", Encoding.UTF8, "application/json");
 
-            /*
-            IsBusy = true;
-            Title = string.Empty;
-            try
+            
+           HttpResponseMessage response = await client.SendAsync(request);
+
+                /* var url = string.Format(_endpoint + "AuthenticateAccount");
+            var json = JsonConvert.SerializeObject(cred);
+
+
+            HttpContent content = new StringContent(json,
+                Encoding.UTF8,
+                WebConstants.ContentTypeJson);
+            client.DefaultRequestHeaders.Add("user-agent", _deviceInfo);
+
+            var resp = await client.PostAsync(url, content);
+
+            if (resp.IsSuccessStatusCode)
             {
-                if (User.Email != null)
-                {
-                    if (User.Password != null)
-                    {
-                        if (User.Email == "admin" && User.Password == "admin")
-                        {
-                            Settings.IsLoggedIn = true;
-                            await Navigation.PushAsync(new MainPage());
-                        }
-                        else
-                        {
-                            Message = "Usuario o contraseña incorrecta";
-                        }
-                        IsBusy = false;
-                    }
-                    else
-                    {
-                        IsBusy = false;
-                        Message = "La contraseña es requerido";
-                    }
-
-                }
-                else
-                {
-                    IsBusy = false;
-                    Message = "El email es requerido";
-                }
+                var result = JsonConvert.DeserializeObject<VResponse>(resp.Content.ReadAsStringAsync().Result);
+                Token = result.Token;
+                return result;
+            }
+            return null;
+        }*/
 
             }
-            catch (Exception e)
+            catch(Exception ex)
             {
-                IsBusy = false;
-                await App.Current.MainPage.DisplayAlert("Error de conexión", e.Message, "Ok");
-            }*/
+                Debug.WriteLine(ex.Message);
+            }
         }
     }
 }
